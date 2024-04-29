@@ -3,10 +3,12 @@ using DapperASPNetCore.Context;
 using DapperASPNetCore.Contracts;
 using DapperASPNetCore.Dto;
 using DapperASPNetCore.Entities;
+using DapperASPNetCore.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace DapperASPNetCore.Repository
@@ -18,6 +20,124 @@ namespace DapperASPNetCore.Repository
 		public CompanyRepository(DapperContext context)
 		{
 			_context = context;
+		}
+
+		public async Task<(bool,string)> ExecCmd(string strQuery)
+		{
+            try
+            {
+				using (var connection = _context.CreateConnection())
+				{
+					int value = await connection.ExecuteAsync(strQuery, commandType: CommandType.Text);
+					return (true,"");
+					//if (value > 0)
+					//	return true;
+					//else
+					//	return false;
+				}
+
+			}catch(Exception ex)
+            {
+				return (false, ex.Message);
+            }
+			
+		}
+
+		public async Task<DataRow> ExecReturnDr(string spName, Dictionary<string, object> para, int commandType = 0)
+		{
+			using (var connection = _context.CreateConnection())
+			{
+				var dmPara = new DynamicParameters();
+				foreach (var item in para.Keys)
+				{
+					dmPara.Add(item, para[item].ToString());
+				}
+				IDataReader reader = null;
+				if (commandType == 0)
+				{
+					reader = await connection.ExecuteReaderAsync(spName, dmPara, commandType: CommandType.Text);
+				}
+				else if (commandType == 1)
+				{
+					reader = await connection.ExecuteReaderAsync(spName, dmPara, commandType: CommandType.StoredProcedure);
+				}
+				DataTable table = new DataTable();
+				table.Load(reader);
+				if(table.Rows.Count > 0)
+                {
+					return table.Rows[0];
+				}
+				return null;
+			}
+		}
+
+		public async Task<object> ExecReturnValue(string spName, Dictionary<string, object> para, int commandType = 0)
+		{
+			using (var connection = _context.CreateConnection())
+			{
+				var dmPara = new DynamicParameters();
+				foreach (var item in para.Keys)
+				{
+					dmPara.Add(item, para[item].ToString());
+				}
+				object obj = null;
+				if (commandType == 0)
+				{
+					obj = await connection.ExecuteScalarAsync(spName, dmPara, commandType: CommandType.Text);
+				}
+				else if (commandType == 1)
+				{
+					obj = await connection.ExecuteScalarAsync(spName, dmPara, commandType: CommandType.StoredProcedure);
+				}
+				return obj;
+			}
+		}
+
+		public async Task<DataTable> ExecReturnDt(string spName, Dictionary<string,object> para, int commandType = 0)
+		{
+			using (var connection = _context.CreateConnection())
+			{
+				var dmPara = new DynamicParameters();
+				foreach(var item in para.Keys)
+                {
+					dmPara.Add(item, para[item].ToString());
+				}
+				IDataReader reader = null;
+				if(commandType == 0)
+                {
+					reader = await connection.ExecuteReaderAsync(spName, dmPara, commandType: CommandType.Text);
+				}
+				else if (commandType == 1)
+                {
+					reader = await connection.ExecuteReaderAsync(spName, dmPara, commandType: CommandType.StoredProcedure);
+				}
+				DataTable table = new DataTable();
+				table.Load(reader);
+				return table;
+			}
+		}
+
+		public async Task<DataSet> ExecReturnDs(string spName, Dictionary<string, object> para, int commandType = 0)
+		{
+			using (var connection = _context.CreateConnection())
+			{
+				var dmPara = new DynamicParameters();
+				foreach (var item in para.Keys)
+				{
+					dmPara.Add(item, para[item].ToString());
+				}
+				IDataReader reader = null;
+				if (commandType == 0)
+				{
+					reader = await connection.ExecuteReaderAsync(spName, dmPara, commandType: CommandType.Text);
+				}
+				else if (commandType == 1)
+				{
+					reader = await connection.ExecuteReaderAsync(spName, dmPara, commandType: CommandType.StoredProcedure);
+				}
+				var dataset = Helper.ConvertDataReaderToDataSet(reader);
+				return dataset;
+			}
 		}
 
 		public async Task<IEnumerable<Company>> GetCompanies()

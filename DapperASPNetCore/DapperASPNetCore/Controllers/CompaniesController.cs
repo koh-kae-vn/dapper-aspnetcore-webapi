@@ -1,10 +1,15 @@
 ﻿using DapperASPNetCore.Contracts;
 using DapperASPNetCore.Dto;
+using DapperASPNetCore.Para.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace DapperASPNetCore.Controllers
@@ -19,6 +24,98 @@ namespace DapperASPNetCore.Controllers
 		{
 			_companyRepo = companyRepo;
 		}
+
+		[HttpPost("execCmd")]
+		public async Task<IActionResult> ExecCmd(paraCore model)
+		{
+			try
+			{
+				string q = Helpers.Helper.Decrypt(model.data);
+				var result = await _companyRepo.ExecCmd(q);
+				if (result.Item1)
+					return Ok();
+				else
+					return StatusCode(500, result.Item2);
+			}
+			catch (Exception ex)
+			{
+				//log error
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpPost("testDs")]
+		public async Task<IActionResult> ExecReturnDs(paraCore model)
+		{
+			try
+			{
+				var companies = await _companyRepo.ExecReturnDs(model.spName, model.dicPara, model.cmType);
+				string outVavlue = JsonConvert.SerializeObject(companies);
+
+				return Ok(outVavlue);
+			}
+			catch (Exception ex)
+			{
+				//log error
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpPost("testDr")]
+		public async Task<IActionResult> ExecReturnDr(paraCore model)
+		{
+			try
+			{
+				var companies = await _companyRepo.ExecReturnDr(model.spName, model.dicPara, model.cmType);
+				//IEnumerable<Dictionary<string, object>> result = Helpers.Helper.ToDictionary(companies.Table);
+				//string outVavlue = JsonConvert.SerializeObject(result);
+
+				//string outVavlue = JsonConvert.SerializeObject(companies.Table);
+				string json = new JObject(
+								companies.Table.Columns.Cast<DataColumn>()
+								  .Select(c => new JProperty(c.ColumnName, JToken.FromObject(companies.Table.Rows[0][c])))
+							).ToString(Formatting.None);
+
+				return Ok(json);
+			}
+			catch (Exception ex)
+			{
+				//log error
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpPost("testValue")]
+		public async Task<IActionResult> ExecReturnValue(paraCore model)
+		{
+			try
+			{
+				var companies = await _companyRepo.ExecReturnValue(model.spName, model.dicPara, model.cmType);
+				return Ok(new { objValue = companies } );
+			}
+			catch (Exception ex)
+			{
+				//log error
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpPost("test")]
+		public async Task<IActionResult> ExecReturnDt(paraCore model)
+		{
+			try
+			{
+				var companies = await _companyRepo.ExecReturnDt(model.spName,model.dicPara,model.cmType);
+				string outVavlue = JsonConvert.SerializeObject(companies);
+				return Ok(outVavlue);
+			}
+			catch (Exception ex)
+			{
+				//log error
+				return StatusCode(500, ex.Message);
+			}
+		}
+
 
 		[HttpGet]
 		public async Task<IActionResult> GetCompanies()

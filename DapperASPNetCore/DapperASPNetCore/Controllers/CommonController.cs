@@ -4,11 +4,13 @@ using DapperASPNetCore.Para.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -30,21 +32,40 @@ namespace DapperASPNetCore.Controllers
         [HttpPost("ExecCmd")]
         public async Task<IActionResult> ExecCmd(paraCore model)
         {
+            var re = Request;
+            var headers = re.Headers;
+            string reqId = string.Empty;
+            StringValues x = default(StringValues);
+            if (headers.ContainsKey("reqId"))
+            {
+                var m = headers.TryGetValue("reqId", out x);
+                if (x.Count > 0)
+                {
+                    reqId = x.First();
+                }
+            }
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             try
             {
                 (bool, string) result;
                 result = await _companyRepo.ExecCmd(model.spName, model.dicPara, model.cmType);
                 if (result.Item1)
+                {
+                    stopwatch.Stop();
+                    _logger.LogInformation("{0},{1} ms", reqId, stopwatch.ElapsedMilliseconds);
                     return Ok();
+                }
                 else
                 {
-                    _logger.LogError(result.Item2);
-                    return StatusCode(500, result.Item2);
+                    throw new Exception(result.Item2);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                stopwatch.Stop();
+                _logger.LogError("{0},{1} ms, Ex: {2}", reqId, stopwatch.ElapsedMilliseconds, ex.Message);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -52,6 +73,21 @@ namespace DapperASPNetCore.Controllers
         [HttpPost("ExecCmdWithQuery")]
         public async Task<IActionResult> ExecCmdWithQuery(paraCoreQuery model)
         {
+            var re = Request;
+            var headers = re.Headers;
+            string reqId = string.Empty;
+            StringValues x = default(StringValues);
+            if (headers.ContainsKey("reqId"))
+            {
+                var m = headers.TryGetValue("reqId", out x);
+                if (x.Count > 0)
+                {
+                    reqId = x.First();
+                }
+            }
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             try
             {
                 string q = Helpers.Helper.Decrypt(model.dataContent);
@@ -64,16 +100,20 @@ namespace DapperASPNetCore.Controllers
                 result = await _companyRepo.ExecCmd(q);
 
                 if (result.Item1)
+                {
+                    stopwatch.Stop();
+                    _logger.LogInformation("{0},{1} ms", reqId, stopwatch.ElapsedMilliseconds);
                     return Ok();
+                }
                 else
                 {
-                    _logger.LogError(result.Item2);
-                    return StatusCode(500, result.Item2);
+                    throw new Exception(result.Item2);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                stopwatch.Stop();
+                _logger.LogError("{0},{1} ms,Ex: {2}", reqId, stopwatch.ElapsedMilliseconds, ex.Message);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -90,7 +130,7 @@ namespace DapperASPNetCore.Controllers
                 }
 
                 var outVavlue = await _companyRepo.ExecReturnDs(q);
-                if(outVavlue.Item2 != "")
+                if (outVavlue.Item2 != "")
                 {
                     throw new Exception(outVavlue.Item2);
                 }
@@ -129,7 +169,7 @@ namespace DapperASPNetCore.Controllers
             try
             {
                 string q = Helpers.Helper.Decrypt(model.dataContent);
-                if(q == "")
+                if (q == "")
                 {
                     throw new Exception("Decrypt Fail");
                 }
@@ -272,7 +312,7 @@ namespace DapperASPNetCore.Controllers
                     throw new Exception("Decrypt Fail");
                 }
                 var outVavlue = await _companyRepo.ExecReturnDt(q);
-                if(outVavlue.Item2 != "")
+                if (outVavlue.Item2 != "")
                 {
                     throw new Exception(outVavlue.Item2);
                 }
@@ -296,7 +336,7 @@ namespace DapperASPNetCore.Controllers
                 }
                 return Ok(outVavlue.Item1);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }

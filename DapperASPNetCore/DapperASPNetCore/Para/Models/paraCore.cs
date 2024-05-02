@@ -11,8 +11,10 @@ namespace DapperASPNetCore.Para.Models
         public int cmType { get; set; }
 
         public Dictionary<string,object> dicPara { get; set; }
+    }
 
-
-        public string data { get; set; }
+    public class paraCoreQuery
+    {
+        public string dataContent { get; set; }
     }
 }

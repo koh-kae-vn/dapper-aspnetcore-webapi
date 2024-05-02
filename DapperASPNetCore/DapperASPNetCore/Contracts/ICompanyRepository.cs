@@ -14,13 +14,19 @@ namespace DapperASPNetCore.Contracts
 		public Task<(bool, string)> ExecCmd(string spName, Dictionary<string, object> para, int commandType = 0);
 
 
-		public Task<DataRow> ExecReturnDr(string spName, Dictionary<string, object> para, int commandType = 0);
+		public Task<(DataRow, string)> ExecReturnDr(string spName, Dictionary<string, object> para, int commandType = 0);
+		public Task<(DataRow, string)> ExecReturnDr(string strQuery);
 
-		public Task<object> ExecReturnValue(string spName, Dictionary<string, object> para, int commandType = 0);
+		public Task<(object, string)> ExecReturnValue(string spName, Dictionary<string, object> para, int commandType = 0);
+		public Task<(object,string)> ExecReturnValue(string strQuery);
 
-		public Task<DataTable> ExecReturnDt(string spName, Dictionary<string, object> para, int commandType = 0);
-		
-		public Task<DataSet> ExecReturnDs(string spName, Dictionary<string, object> para, int commandType = 0);
+		public Task<(DataTable, string)> ExecReturnDt(string spName, Dictionary<string, object> para, int commandType = 0);
+		public Task<(DataTable,string)> ExecReturnDt(string strQuery);
+
+		public Task<(DataSet, string)> ExecReturnDs(string spName, Dictionary<string, object> para, int commandType = 0);
+
+		public Task<(DataSet,string)> ExecReturnDs(string strQuery);
+
 
 		public Task<IEnumerable<Company>> GetCompanies();
 		public Task<Company> GetCompany(int id);

@@ -13,325 +13,440 @@ using System.Threading.Tasks;
 
 namespace DapperASPNetCore.Repository
 {
-	public class CompanyRepository : ICompanyRepository
-	{
-		private readonly DapperContext _context;
+    public class CompanyRepository : ICompanyRepository
+    {
+        private readonly DapperContext _context;
 
-		public CompanyRepository(DapperContext context)
-		{
-			_context = context;
-		}
+        public CompanyRepository(DapperContext context)
+        {
+            _context = context;
+        }
 
-		public async Task<(bool,string)> ExecCmd(string strQuery)
-		{
+        public async Task<(bool, string)> ExecCmd(string strQuery)
+        {
             try
             {
-				using (var connection = _context.CreateConnection())
-				{
-					int value = await connection.ExecuteAsync(strQuery, commandType: CommandType.Text);
-					return (true,"");
-					//if (value > 0)
-					//	return true;
-					//else
-					//	return false;
-				}
+                using (var connection = _context.CreateConnection())
+                {
+                    int value = await connection.ExecuteAsync(strQuery, commandType: CommandType.Text);
+                    return (true, "");
+                    //if (value > 0)
+                    //	return true;
+                    //else
+                    //	return false;
+                }
 
-			}catch(Exception ex)
-            {
-				return (false, ex.Message);
             }
-			
-		}
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
 
-		public async Task<(bool, string)> ExecCmd(string spName, Dictionary<string, object> para, int commandType = 0)
-		{
-			try
-			{
-				using (var connection = _context.CreateConnection())
-				{
-					var dmPara = new DynamicParameters();
-					foreach (var item in para.Keys)
-					{
-						dmPara.Add(item, para[item].ToString());
-					}
-					int value = 0;
-					if (commandType == 0)
-					{
-						value = await connection.ExecuteAsync(spName, dmPara, commandType: CommandType.Text);
-					}
-					else if (commandType == 1)
-					{
-						value = await connection.ExecuteAsync(spName, dmPara, commandType: CommandType.StoredProcedure);
-					}
+        }
 
-					return (true, "");
-					//if (value > 0)
-					//	return true;
-					//else
-					//	return false;
-				}
-
-			}
-			catch (Exception ex)
-			{
-				return (false, ex.Message);
-			}
-
-		}
-
-		public async Task<DataRow> ExecReturnDr(string spName, Dictionary<string, object> para, int commandType = 0)
-		{
-			using (var connection = _context.CreateConnection())
-			{
-				var dmPara = new DynamicParameters();
-				foreach (var item in para.Keys)
-				{
-					dmPara.Add(item, para[item].ToString());
-				}
-				IDataReader reader = null;
-				if (commandType == 0)
-				{
-					reader = await connection.ExecuteReaderAsync(spName, dmPara, commandType: CommandType.Text);
-				}
-				else if (commandType == 1)
-				{
-					reader = await connection.ExecuteReaderAsync(spName, dmPara, commandType: CommandType.StoredProcedure);
-				}
-				DataTable table = new DataTable();
-				table.Load(reader);
-				if(table.Rows.Count > 0)
+        public async Task<(bool, string)> ExecCmd(string spName, Dictionary<string, object> para, int commandType = 0)
+        {
+            try
+            {
+                using (var connection = _context.CreateConnection())
                 {
-					return table.Rows[0];
-				}
-				return null;
-			}
-		}
+                    var dmPara = new DynamicParameters();
+                    foreach (var item in para.Keys)
+                    {
+                        dmPara.Add(item, para[item].ToString());
+                    }
+                    int value = 0;
+                    if (commandType == 0)
+                    {
+                        value = await connection.ExecuteAsync(spName, dmPara, commandType: CommandType.Text);
+                    }
+                    else if (commandType == 1)
+                    {
+                        value = await connection.ExecuteAsync(spName, dmPara, commandType: CommandType.StoredProcedure);
+                    }
 
-		public async Task<object> ExecReturnValue(string spName, Dictionary<string, object> para, int commandType = 0)
-		{
-			using (var connection = _context.CreateConnection())
-			{
-				var dmPara = new DynamicParameters();
-				foreach (var item in para.Keys)
-				{
-					dmPara.Add(item, para[item].ToString());
-				}
-				object obj = null;
-				if (commandType == 0)
-				{
-					obj = await connection.ExecuteScalarAsync(spName, dmPara, commandType: CommandType.Text);
-				}
-				else if (commandType == 1)
-				{
-					obj = await connection.ExecuteScalarAsync(spName, dmPara, commandType: CommandType.StoredProcedure);
-				}
-				return obj;
-			}
-		}
+                    return (true, "");
+                    //if (value > 0)
+                    //	return true;
+                    //else
+                    //	return false;
+                }
 
-		public async Task<DataTable> ExecReturnDt(string spName, Dictionary<string,object> para, int commandType = 0)
-		{
-			using (var connection = _context.CreateConnection())
-			{
-				var dmPara = new DynamicParameters();
-				foreach(var item in para.Keys)
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
+
+        }
+
+        public async Task<(DataRow, string)> ExecReturnDr(string spName, Dictionary<string, object> para, int commandType = 0)
+        {
+            try
+            {
+                using (var connection = _context.CreateConnection())
                 {
-					dmPara.Add(item, para[item].ToString());
-				}
-				IDataReader reader = null;
-				if(commandType == 0)
+                    var dmPara = new DynamicParameters();
+                    foreach (var item in para.Keys)
+                    {
+                        dmPara.Add(item, para[item].ToString());
+                    }
+                    IDataReader reader = null;
+                    if (commandType == 0)
+                    {
+                        reader = await connection.ExecuteReaderAsync(spName, dmPara, commandType: CommandType.Text);
+                    }
+                    else if (commandType == 1)
+                    {
+                        reader = await connection.ExecuteReaderAsync(spName, dmPara, commandType: CommandType.StoredProcedure);
+                    }
+                    DataTable table = new DataTable();
+                    table.Load(reader);
+                    if (table.Rows.Count > 0)
+                    {
+                        return (table.Rows[0], "");
+                    }
+                    return (null, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                return (null, ex.Message);
+            }
+        }
+
+        public async Task<(DataRow, string)> ExecReturnDr(string strQuery)
+        {
+            try
+            {
+                using (var connection = _context.CreateConnection())
                 {
-					reader = await connection.ExecuteReaderAsync(spName, dmPara, commandType: CommandType.Text);
-				}
-				else if (commandType == 1)
+                    IDataReader reader = null;
+                    reader = await connection.ExecuteReaderAsync(strQuery, commandType: CommandType.Text);
+
+                    DataTable table = new DataTable();
+                    table.Load(reader);
+                    if (table.Rows.Count > 0)
+                    {
+                        return (table.Rows[0], "");
+                    }
+                    return (null, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                return (null, ex.Message);
+            }
+
+        }
+
+        public async Task<(object, string)> ExecReturnValue(string strQuery)
+        {
+            try
+            {
+                using (var connection = _context.CreateConnection())
                 {
-					reader = await connection.ExecuteReaderAsync(spName, dmPara, commandType: CommandType.StoredProcedure);
-				}
-				DataTable table = new DataTable();
-				table.Load(reader);
-				return table;
-			}
-		}
 
-		public async Task<DataSet> ExecReturnDs(string spName, Dictionary<string, object> para, int commandType = 0)
-		{
-			using (var connection = _context.CreateConnection())
-			{
-				var dmPara = new DynamicParameters();
-				foreach (var item in para.Keys)
-				{
-					dmPara.Add(item, para[item].ToString());
-				}
-				IDataReader reader = null;
-				if (commandType == 0)
-				{
-					reader = await connection.ExecuteReaderAsync(spName, dmPara, commandType: CommandType.Text);
-				}
-				else if (commandType == 1)
-				{
-					reader = await connection.ExecuteReaderAsync(spName, dmPara, commandType: CommandType.StoredProcedure);
-				}
-				var dataset = Helper.ConvertDataReaderToDataSet(reader);
-				return dataset;
-			}
-		}
+                    object obj = null;
+                    obj = await connection.ExecuteScalarAsync(strQuery, commandType: CommandType.Text);
 
-		public async Task<IEnumerable<Company>> GetCompanies()
-		{
-			var query = "SELECT Id, Name, Address, Country FROM Companies";
+                    return (obj, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                return (null, ex.Message);
+            }
 
-			using (var connection = _context.CreateConnection())
-			{
-				var companies = await connection.QueryAsync<Company>(query);
-				return companies.ToList();
-			}
-		}
+        }
 
-		public async Task<Company> GetCompany(int id)
-		{
-			var query = "SELECT * FROM Companies WHERE Id = @Id";
+        public async Task<(object, string)> ExecReturnValue(string spName, Dictionary<string, object> para, int commandType = 0)
+        {
+            try
+            {
+                using (var connection = _context.CreateConnection())
+                {
+                    var dmPara = new DynamicParameters();
+                    foreach (var item in para.Keys)
+                    {
+                        dmPara.Add(item, para[item].ToString());
+                    }
+                    object obj = null;
+                    if (commandType == 0)
+                    {
+                        obj = await connection.ExecuteScalarAsync(spName, dmPara, commandType: CommandType.Text);
+                    }
+                    else if (commandType == 1)
+                    {
+                        obj = await connection.ExecuteScalarAsync(spName, dmPara, commandType: CommandType.StoredProcedure);
+                    }
+                    return (obj, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                return (null, ex.Message);
+            }
 
-			using (var connection = _context.CreateConnection())
-			{
-				var company = await connection.QuerySingleOrDefaultAsync<Company>(query, new { id });
+        }
 
-				return company;
-			}
-		}
+        public async Task<(DataTable, string)> ExecReturnDt(string spName, Dictionary<string, object> para, int commandType = 0)
+        {
+            try
+            {
+                using (var connection = _context.CreateConnection())
+                {
+                    var dmPara = new DynamicParameters();
+                    foreach (var item in para.Keys)
+                    {
+                        dmPara.Add(item, para[item].ToString());
+                    }
+                    IDataReader reader = null;
+                    if (commandType == 0)
+                    {
+                        reader = await connection.ExecuteReaderAsync(spName, dmPara, commandType: CommandType.Text);
+                    }
+                    else if (commandType == 1)
+                    {
+                        reader = await connection.ExecuteReaderAsync(spName, dmPara, commandType: CommandType.StoredProcedure);
+                    }
+                    DataTable table = new DataTable();
+                    table.Load(reader);
+                    return (table, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                return (null, ex.Message);
+            }
 
-		public async Task<Company> CreateCompany(CompanyForCreationDto company)
-		{
-			var query = "INSERT INTO Companies (Name, Address, Country) VALUES (@Name, @Address, @Country)" +
-				"SELECT CAST(SCOPE_IDENTITY() as int)";
+        }
 
-			var parameters = new DynamicParameters();
-			parameters.Add("Name", company.Name, DbType.String);
-			parameters.Add("Address", company.Address, DbType.String);
-			parameters.Add("Country", company.Country, DbType.String);
+        public async Task<(DataTable, string)> ExecReturnDt(string strQuery)
+        {
+            try
+            {
+                using (var connection = _context.CreateConnection())
+                {
+                    IDataReader reader = null;
+                    reader = await connection.ExecuteReaderAsync(strQuery, commandType: CommandType.Text);
 
-			using (var connection = _context.CreateConnection())
-			{
-				var id = await connection.QuerySingleAsync<int>(query, parameters);
+                    DataTable table = new DataTable();
+                    table.Load(reader);
+                    return (table, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                return (null, ex.Message);
+            }
+        }
 
-				var createdCompany = new Company
-				{
-					Id = id,
-					Name = company.Name,
-					Address = company.Address,
-					Country = company.Country
-				};
+        public async Task<(DataSet, string)> ExecReturnDs(string spName, Dictionary<string, object> para, int commandType = 0)
+        {
+            try
+            {
+                using (var connection = _context.CreateConnection())
+                {
+                    var dmPara = new DynamicParameters();
+                    foreach (var item in para.Keys)
+                    {
+                        dmPara.Add(item, para[item].ToString());
+                    }
+                    IDataReader reader = null;
+                    if (commandType == 0)
+                    {
+                        reader = await connection.ExecuteReaderAsync(spName, dmPara, commandType: CommandType.Text);
+                    }
+                    else if (commandType == 1)
+                    {
+                        reader = await connection.ExecuteReaderAsync(spName, dmPara, commandType: CommandType.StoredProcedure);
+                    }
+                    var dataset = Helper.ConvertDataReaderToDataSet(reader);
+                    return (dataset, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                return (null, ex.Message);
+            }
+        }
 
-				return createdCompany;
-			}
-		}
+        public async Task<(DataSet, string)> ExecReturnDs(string strQuery)
+        {
+            try
+            {
+                using (var connection = _context.CreateConnection())
+                {
+                    IDataReader reader = null;
+                    reader = await connection.ExecuteReaderAsync(strQuery, commandType: CommandType.Text);
 
-		public async Task UpdateCompany(int id, CompanyForUpdateDto company)
-		{
-			var query = "UPDATE Companies SET Name = @Name, Address = @Address, Country = @Country WHERE Id = @Id";
+                    var dataset = Helper.ConvertDataReaderToDataSet(reader);
+                    return (dataset, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                return (null, ex.Message);
+            }
+        }
 
-			var parameters = new DynamicParameters();
-			parameters.Add("Id", id, DbType.Int32);
-			parameters.Add("Name", company.Name, DbType.String);
-			parameters.Add("Address", company.Address, DbType.String);
-			parameters.Add("Country", company.Country, DbType.String);
+        public async Task<IEnumerable<Company>> GetCompanies()
+        {
+            var query = "SELECT Id, Name, Address, Country FROM Companies";
 
-			using (var connection = _context.CreateConnection())
-			{
-				await connection.ExecuteAsync(query, parameters);
-			}
-		}
+            using (var connection = _context.CreateConnection())
+            {
+                var companies = await connection.QueryAsync<Company>(query);
+                return companies.ToList();
+            }
+        }
 
-		public async Task DeleteCompany(int id)
-		{
-			var query = "DELETE FROM Companies WHERE Id = @Id";
+        public async Task<Company> GetCompany(int id)
+        {
+            var query = "SELECT * FROM Companies WHERE Id = @Id";
 
-			using (var connection = _context.CreateConnection())
-			{
-				await connection.ExecuteAsync(query, new { id });
-			}
-		}
+            using (var connection = _context.CreateConnection())
+            {
+                var company = await connection.QuerySingleOrDefaultAsync<Company>(query, new { id });
 
-		public async Task<Company> GetCompanyByEmployeeId(int id)
-		{
-			var procedureName = "ShowCompanyForProvidedEmployeeId";
-			var parameters = new DynamicParameters();
-			parameters.Add("Id", id, DbType.Int32, ParameterDirection.Input);
+                return company;
+            }
+        }
 
-			using (var connection = _context.CreateConnection())
-			{
-				var company = await connection.QueryFirstOrDefaultAsync<Company>
-					(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        public async Task<Company> CreateCompany(CompanyForCreationDto company)
+        {
+            var query = "INSERT INTO Companies (Name, Address, Country) VALUES (@Name, @Address, @Country)" +
+                "SELECT CAST(SCOPE_IDENTITY() as int)";
 
-				return company;
-			}
-		}
+            var parameters = new DynamicParameters();
+            parameters.Add("Name", company.Name, DbType.String);
+            parameters.Add("Address", company.Address, DbType.String);
+            parameters.Add("Country", company.Country, DbType.String);
 
-		public async Task<Company> GetCompanyEmployeesMultipleResults(int id)
-		{
-			var query = "SELECT * FROM Companies WHERE Id = @Id;" +
-						"SELECT * FROM Employees WHERE CompanyId = @Id";
+            using (var connection = _context.CreateConnection())
+            {
+                var id = await connection.QuerySingleAsync<int>(query, parameters);
 
-			using (var connection = _context.CreateConnection())
-			using (var multi = await connection.QueryMultipleAsync(query, new { id }))
-			{
-				var company = await multi.ReadSingleOrDefaultAsync<Company>();
-				if (company != null)
-					company.Employees = (await multi.ReadAsync<Employee>()).ToList();
+                var createdCompany = new Company
+                {
+                    Id = id,
+                    Name = company.Name,
+                    Address = company.Address,
+                    Country = company.Country
+                };
 
-				return company;
-			}
-		}
+                return createdCompany;
+            }
+        }
 
-		public async Task<List<Company>> GetCompaniesEmployeesMultipleMapping()
-		{
-			var query = "SELECT * FROM Companies c JOIN Employees e ON c.Id = e.CompanyId";
+        public async Task UpdateCompany(int id, CompanyForUpdateDto company)
+        {
+            var query = "UPDATE Companies SET Name = @Name, Address = @Address, Country = @Country WHERE Id = @Id";
 
-			using (var connection = _context.CreateConnection())
-			{
-				var companyDict = new Dictionary<int, Company>();
+            var parameters = new DynamicParameters();
+            parameters.Add("Id", id, DbType.Int32);
+            parameters.Add("Name", company.Name, DbType.String);
+            parameters.Add("Address", company.Address, DbType.String);
+            parameters.Add("Country", company.Country, DbType.String);
 
-				var companies = await connection.QueryAsync<Company, Employee, Company>(
-					query, (company, employee) =>
-					{
-						if (!companyDict.TryGetValue(company.Id, out var currentCompany))
-						{
-							currentCompany = company;
-							companyDict.Add(currentCompany.Id, currentCompany);
-						}
+            using (var connection = _context.CreateConnection())
+            {
+                await connection.ExecuteAsync(query, parameters);
+            }
+        }
 
-						currentCompany.Employees.Add(employee);
-						return currentCompany;
-					}
-				);
+        public async Task DeleteCompany(int id)
+        {
+            var query = "DELETE FROM Companies WHERE Id = @Id";
 
-				return companies.Distinct().ToList();
-			}
-		}
+            using (var connection = _context.CreateConnection())
+            {
+                await connection.ExecuteAsync(query, new { id });
+            }
+        }
 
-		public async Task CreateMultipleCompanies(List<CompanyForCreationDto> companies)
-		{
-			var query = "INSERT INTO Companies (Name, Address, Country) VALUES (@Name, @Address, @Country)";
+        public async Task<Company> GetCompanyByEmployeeId(int id)
+        {
+            var procedureName = "ShowCompanyForProvidedEmployeeId";
+            var parameters = new DynamicParameters();
+            parameters.Add("Id", id, DbType.Int32, ParameterDirection.Input);
 
-			using (var connection = _context.CreateConnection())
-			{
-				connection.Open();
+            using (var connection = _context.CreateConnection())
+            {
+                var company = await connection.QueryFirstOrDefaultAsync<Company>
+                    (procedureName, parameters, commandType: CommandType.StoredProcedure);
 
-				using (var transaction = connection.BeginTransaction())
-				{
-					foreach (var company in companies)
-					{
-						var parameters = new DynamicParameters();
-						parameters.Add("Name", company.Name, DbType.String);
-						parameters.Add("Address", company.Address, DbType.String);
-						parameters.Add("Country", company.Country, DbType.String);
+                return company;
+            }
+        }
 
-						await connection.ExecuteAsync(query, parameters, transaction: transaction);
-						//throw new Exception();
-					}
+        public async Task<Company> GetCompanyEmployeesMultipleResults(int id)
+        {
+            var query = "SELECT * FROM Companies WHERE Id = @Id;" +
+                        "SELECT * FROM Employees WHERE CompanyId = @Id";
 
-					transaction.Commit();
-				}
-			}
-		}
-	}
+            using (var connection = _context.CreateConnection())
+            using (var multi = await connection.QueryMultipleAsync(query, new { id }))
+            {
+                var company = await multi.ReadSingleOrDefaultAsync<Company>();
+                if (company != null)
+                    company.Employees = (await multi.ReadAsync<Employee>()).ToList();
+
+                return company;
+            }
+        }
+
+        public async Task<List<Company>> GetCompaniesEmployeesMultipleMapping()
+        {
+            var query = "SELECT * FROM Companies c JOIN Employees e ON c.Id = e.CompanyId";
+
+            using (var connection = _context.CreateConnection())
+            {
+                var companyDict = new Dictionary<int, Company>();
+
+                var companies = await connection.QueryAsync<Company, Employee, Company>(
+                    query, (company, employee) =>
+                    {
+                        if (!companyDict.TryGetValue(company.Id, out var currentCompany))
+                        {
+                            currentCompany = company;
+                            companyDict.Add(currentCompany.Id, currentCompany);
+                        }
+
+                        currentCompany.Employees.Add(employee);
+                        return currentCompany;
+                    }
+                );
+
+                return companies.Distinct().ToList();
+            }
+        }
+
+        public async Task CreateMultipleCompanies(List<CompanyForCreationDto> companies)
+        {
+            var query = "INSERT INTO Companies (Name, Address, Country) VALUES (@Name, @Address, @Country)";
+
+            using (var connection = _context.CreateConnection())
+            {
+                connection.Open();
+
+                using (var transaction = connection.BeginTransaction())
+                {
+                    foreach (var company in companies)
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("Name", company.Name, DbType.String);
+                        parameters.Add("Address", company.Address, DbType.String);
+                        parameters.Add("Country", company.Country, DbType.String);
+
+                        await connection.ExecuteAsync(query, parameters, transaction: transaction);
+                        //throw new Exception();
+                    }
+
+                    transaction.Commit();
+                }
+            }
+        }
+    }
 }

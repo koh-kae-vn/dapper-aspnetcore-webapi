@@ -11,6 +11,8 @@ namespace DapperASPNetCore.Contracts
 	public interface ICompanyRepository
 	{
 		public Task<(bool,string)> ExecCmd(string strQuery);
+		public Task<(bool, string)> ExecCmd(string spName, Dictionary<string, object> para, int commandType = 0);
+
 
 		public Task<DataRow> ExecReturnDr(string spName, Dictionary<string, object> para, int commandType = 0);
 

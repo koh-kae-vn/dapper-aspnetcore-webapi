@@ -43,6 +43,42 @@ namespace DapperASPNetCore.Repository
 			
 		}
 
+		public async Task<(bool, string)> ExecCmd(string spName, Dictionary<string, object> para, int commandType = 0)
+		{
+			try
+			{
+				using (var connection = _context.CreateConnection())
+				{
+					var dmPara = new DynamicParameters();
+					foreach (var item in para.Keys)
+					{
+						dmPara.Add(item, para[item].ToString());
+					}
+					int value = 0;
+					if (commandType == 0)
+					{
+						value = await connection.ExecuteAsync(spName, dmPara, commandType: CommandType.Text);
+					}
+					else if (commandType == 1)
+					{
+						value = await connection.ExecuteAsync(spName, dmPara, commandType: CommandType.StoredProcedure);
+					}
+
+					return (true, "");
+					//if (value > 0)
+					//	return true;
+					//else
+					//	return false;
+				}
+
+			}
+			catch (Exception ex)
+			{
+				return (false, ex.Message);
+			}
+
+		}
+
 		public async Task<DataRow> ExecReturnDr(string spName, Dictionary<string, object> para, int commandType = 0)
 		{
 			using (var connection = _context.CreateConnection())

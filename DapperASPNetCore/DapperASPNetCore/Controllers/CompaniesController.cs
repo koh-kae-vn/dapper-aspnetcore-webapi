@@ -33,7 +33,15 @@ namespace DapperASPNetCore.Controllers
             try
             {
                 string q = Helpers.Helper.Decrypt(model.data);
-                var result = await _companyRepo.ExecCmd(q);
+                (bool, string) result;
+                if (!String.IsNullOrEmpty(model.data))
+                {
+                    result = await _companyRepo.ExecCmd(q);
+                }
+                else
+                {
+                    result = await _companyRepo.ExecCmd(model.spName,model.dicPara,model.cmType);
+                }
                 if (result.Item1)
                     return Ok();
                 else

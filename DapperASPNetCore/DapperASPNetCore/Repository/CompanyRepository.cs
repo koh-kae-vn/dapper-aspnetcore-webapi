@@ -21,6 +21,25 @@ namespace DapperASPNetCore.Repository
         {
             _context = context;
         }
+        public async Task<(bool?, string)> ExecCmdAdv(string strQuery)
+        {
+            try
+            {
+                using (var connection = _context.CreateConnection())
+                {
+                    int value = await connection.ExecuteAsync(strQuery, commandType: CommandType.Text);
+                    if (value > 0)
+                        return (true, "");
+                    else
+                        return (null, strQuery);
+                }
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
+
+        }
 
         public async Task<(bool, string)> ExecCmd(string strQuery)
         {

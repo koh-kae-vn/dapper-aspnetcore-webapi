@@ -21,7 +21,11 @@ namespace DapperASPNetCore
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddSingleton<DapperContext>();
+			services.AddSingleton<CREDITContext>();
+
 			services.AddScoped<ICompanyRepository, CompanyRepository>();
+			services.AddScoped<ICompanyRepository, CREDITRepository>();
+
 			services.AddControllers();
 			services.AddCors(options => {
 				options.AddPolicy("mypolicy", builder => builder

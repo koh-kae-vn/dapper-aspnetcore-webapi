@@ -17,4 +17,9 @@ namespace DapperASPNetCore.Para.Models
     {
         public string dataContent { get; set; }
     }
+
+    public class paraCoreReq
+    {
+        public string dataContent { get; set; }
+    }
 }

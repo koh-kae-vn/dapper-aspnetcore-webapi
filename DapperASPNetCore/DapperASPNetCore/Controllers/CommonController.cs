@@ -86,7 +86,7 @@ namespace DapperASPNetCore.Controllers
         }
 
         [HttpPost("ExecCmd")]
-        public async Task<IActionResult> ExecCmd(paraCore model)
+        public async Task<IActionResult> ExecCmd(paraCoreReq paraCore)
         {
             var re = Request;
             var headers = re.Headers;
@@ -105,6 +105,14 @@ namespace DapperASPNetCore.Controllers
 
             try
             {
+                string q = Helpers.Helper.Decrypt(paraCore.dataContent);
+                if (q == "")
+                {
+                    throw new Exception("Decrypt Fail");
+                }
+
+                var model = JsonConvert.DeserializeObject<paraCore>(q);
+
                 (bool, string) result;
                 result = await _companyRepo.ExecCmd(model.spName, model.dicPara, model.cmType);
                 if (result.Item1)
@@ -219,7 +227,7 @@ namespace DapperASPNetCore.Controllers
         }
 
         [HttpPost("ExecReturnDs")]
-        public async Task<IActionResult> ExecReturnDs(paraCore model)
+        public async Task<IActionResult> ExecReturnDs(paraCoreReq para)
         {
             string reqId = string.Empty;
 
@@ -236,6 +244,14 @@ namespace DapperASPNetCore.Controllers
 
             try
             {
+                string q = Helpers.Helper.Decrypt(para.dataContent);
+                if (q == "")
+                {
+                    throw new Exception("Decrypt Fail");
+                }
+
+                var model = JsonConvert.DeserializeObject<paraCore>(q);
+
                 var outVavlue = await _companyRepo.ExecReturnDs(model.spName, model.dicPara, model.cmType);
                 if (outVavlue.Item2 != "")
                 {
@@ -308,7 +324,7 @@ namespace DapperASPNetCore.Controllers
 
 
         [HttpPost("ExecReturnDr")]
-        public async Task<IActionResult> ExecReturnDr(paraCore model)
+        public async Task<IActionResult> ExecReturnDr(paraCoreReq para)
         {
             string reqId = string.Empty;
 
@@ -325,6 +341,14 @@ namespace DapperASPNetCore.Controllers
 
             try
             {
+                string q = Helpers.Helper.Decrypt(para.dataContent);
+                if (q == "")
+                {
+                    throw new Exception("Decrypt Fail");
+                }
+
+                var model = JsonConvert.DeserializeObject<paraCore>(q);
+
                 var companies = await _companyRepo.ExecReturnDr(model.spName, model.dicPara, model.cmType);
 
                 if (companies.Item2 != "")
@@ -353,7 +377,7 @@ namespace DapperASPNetCore.Controllers
         }
 
         [HttpPost("ExecReturnJsonObject")]
-        public async Task<IActionResult> ExecReturnJsonObject(paraCore model)
+        public async Task<IActionResult> ExecReturnJsonObject(paraCoreReq para)
         {
             string reqId = string.Empty;
 
@@ -370,6 +394,14 @@ namespace DapperASPNetCore.Controllers
 
             try
             {
+                string q = Helpers.Helper.Decrypt(para.dataContent);
+                if (q == "")
+                {
+                    throw new Exception("Decrypt Fail");
+                }
+
+                var model = JsonConvert.DeserializeObject<paraCore>(q);
+
                 var companies = await _companyRepo.ExecReturnDr(model.spName, model.dicPara, model.cmType);
                 if (companies.Item2 != "")
                 {
@@ -501,7 +533,7 @@ namespace DapperASPNetCore.Controllers
         }
 
         [HttpPost("ExecReturnValue")]
-        public async Task<IActionResult> ExecReturnValue(paraCore model)
+        public async Task<IActionResult> ExecReturnValue(paraCoreReq para)
         {
             string reqId = string.Empty;
 
@@ -518,6 +550,14 @@ namespace DapperASPNetCore.Controllers
 
             try
             {
+                string q = Helpers.Helper.Decrypt(para.dataContent);
+                if (q == "")
+                {
+                    throw new Exception("Decrypt Fail");
+                }
+
+                var model = JsonConvert.DeserializeObject<paraCore>(q);
+
                 var outVavlue = await _companyRepo.ExecReturnValue(model.spName, model.dicPara, model.cmType);
                 if (outVavlue.Item2 != "")
                 {
@@ -582,7 +622,7 @@ namespace DapperASPNetCore.Controllers
         }
 
         [HttpPost("ExecReturnDt")]
-        public async Task<IActionResult> ExecReturnDt(paraCore model)
+        public async Task<IActionResult> ExecReturnDt(paraCoreReq para)
         {
             string reqId = string.Empty;
 
@@ -599,6 +639,14 @@ namespace DapperASPNetCore.Controllers
 
             try
             {
+                string q = Helpers.Helper.Decrypt(para.dataContent);
+                if (q == "")
+                {
+                    throw new Exception("Decrypt Fail");
+                }
+
+                var model = JsonConvert.DeserializeObject<paraCore>(q);
+
                 var outVavlue = await _companyRepo.ExecReturnDt(model.spName, model.dicPara, model.cmType);
                 if (outVavlue.Item2 != "")
                 {

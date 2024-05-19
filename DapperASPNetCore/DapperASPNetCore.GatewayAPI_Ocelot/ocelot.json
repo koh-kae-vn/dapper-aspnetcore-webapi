@@ -1,0 +1,56 @@
+{
+  "GlobalConfiguration": {
+    "BaseUrl": "http://apigateway.chailease.local/"
+  },
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/common/ExecCmd",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "apicommon.chailease.local",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/common/ExecCmd",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/common/ExecCmd",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "apicredit.chailease.local",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/credit/ExecCmd",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/test_service/ExecCmd",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "apicom.chailease.local",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/test/ExecCmd",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/test_service/ExecCmdCredit",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "apicre.chailease.local",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/test/ExecCmdCredit",
+      "UpstreamHttpMethod": [ "POST" ]
+    }
+  ]
+
+}

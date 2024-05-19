@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DapperASPNetCore", "DapperASPNetCore\DapperASPNetCore.csproj", "{0E176561-F079-442C-993F-CBC45085C83D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DapperASPNetCore.GatewayAPI", "DapperASPNetCore.GatewayAPI\DapperASPNetCore.GatewayAPI.csproj", "{13ACD706-C239-4787-AD7D-03120735E217}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DapperASPNetCore.GatewayAPI", "DapperASPNetCore.GatewayAPI\DapperASPNetCore.GatewayAPI.csproj", "{13ACD706-C239-4787-AD7D-03120735E217}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DapperASPNetCore.GatewayAPI_Ocelot", "DapperASPNetCore.GatewayAPI_Ocelot\DapperASPNetCore.GatewayAPI_Ocelot.csproj", "{500F323E-38F8-4E6A-A34A-182A74B74263}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{13ACD706-C239-4787-AD7D-03120735E217}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{13ACD706-C239-4787-AD7D-03120735E217}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{13ACD706-C239-4787-AD7D-03120735E217}.Release|Any CPU.Build.0 = Release|Any CPU
+		{500F323E-38F8-4E6A-A34A-182A74B74263}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{500F323E-38F8-4E6A-A34A-182A74B74263}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{500F323E-38F8-4E6A-A34A-182A74B74263}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{500F323E-38F8-4E6A-A34A-182A74B74263}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

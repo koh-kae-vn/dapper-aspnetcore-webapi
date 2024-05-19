@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace DapperASPNetCore.Repository
 {
-    public class CREDITRepository : ICompanyRepository
+    public class CREDITRepository : ICreditRepository
     {
         private readonly CREDITContext _context;
 
